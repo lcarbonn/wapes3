@@ -1,75 +1,27 @@
-# Nuxt Minimal Starter
+# Wapes
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+>Vape Calculator
 
-## Setup
+Wapes is a simple standlone web app calculator for vape
 
-Make sure to install dependencies:
+## Wapes on firebase
 
-```bash
-# npm
-npm install
+Wapes is deployed on https://nico-wapes.web.app/
 
-# pnpm
-pnpm install
+## Build Setup
 
-# yarn
-yarn install
+``` bash
+# install dependencies
+$ npm install
 
-# bun
-bun install
+# serve with hot reload at your local ip address :3000 for standalone acces from mobile
+$ npm run dev -- --hostname:0.0.0.0
+
+# build for production and launch server
+$ npm run build
+$ npm start
+
+# generate static project
+$ npm run generate
+
 ```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
