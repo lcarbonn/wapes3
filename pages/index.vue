@@ -40,8 +40,8 @@
           <div class="row">
             <span>Nico Strength (mg/ml)</span>
             <div class="colnico">
-              <div class="nicodiv" v-for="nico in nicos" v-bind:class="{activediv:isActive(nico)}" v-bind:key="nico.id">
-                <a class="nicolink" v-bind:class="{activelink:isActive(nico)}" v-bind:key="nico.id" v-on:click="calcRate(nico.rate)" >{{nico.rate}}</a>
+              <div class="nicodiv" v-for="nico in nicos" v-bind:class="{activediv:isActive(nico.rate)}" v-bind:key="nico.id">
+                <a class="nicolink" v-bind:class="{activelink:isActive(nico.rate)}" v-bind:key="nico.id" v-on:click="calcRate(nico.rate)" >{{nico.rate}}</a>
               </div>
             </div>
           </div>
@@ -68,112 +68,102 @@
   </section>
 </template>
 
-<script>
-export default {
-
-  data() {return {
-    totalVolume: '',
-    baseVolume: '',
-    flavorPercent: '',
-    flavorVolume:'',
-    nicoStrength:'',
-    nbBooster:'',
-    boostVolume:'',
-    flavorCond:'',
-    nbFlavor:'',
-    isTotal:false,
-    isPercent:true,
-    nicos: [
-      {rate:0},
-      {rate:3},
-      {rate:6},
-      {rate:9},
-      {rate:12},
-      {rate:16}
+<script setup lang="ts">
+  // local ref
+  const totalVolume = ref(0)
+  const baseVolume = ref(0)
+  const flavorPercent = ref(0)
+  const flavorVolume = ref(0)
+  const nicoStrength = ref(0)
+  const nbBooster = ref(0)
+  const boostVolume = ref(0)
+  const flavorCond = ref(0)
+  const nbFlavor = ref(0)
+  const isTotal = ref(false)
+  const isPercent = ref(true)
+  const nicos = [
+      {id:0, rate:0},
+      {id:1, rate:3},
+      {id:2, rate:6},
+      {id:3, rate:9},
+      {id:4, rate:12},
+      {id:5, rate:16}
     ]
-  }},
 
-    methods: {
-    isActive : function(nico) {
-      if(nico.rate==this.nicoStrength) return true;
+    //methods
+    const isActive = (nico:number) => {
+      if(nico==nicoStrength.value) return true;
       else return false;
-    },
-
-    calculFlavor : function() {
-      if(this.isPercent==true) {
-        if(this.flavorPercent !='' && !isNaN(this.flavorPercent)) {
-          this.flavorVolume = Math.round(this.totalVolume * this.flavorPercent/100);
-        }
-      } else {
-        if(this.flavorVolume !='' && !isNaN(this.flavorVolume)) {
-          this.flavorPercent = Math.round (this.flavorVolume/this.totalVolume*100);
-        }
-      }
-    },
-
-    calcWithBase : function() {
-      this.totalVolume = '';
-      if(this.isPercent==true) {
-        this.totalVolume = Math.round(this.baseVolume / (1- (this.flavorPercent/100) - (this.nicoStrength/20)));
-      } else {
-        this.totalVolume = Math.round((this.baseVolume + this.flavorVolume) / (1- (this.nicoStrength/20)));
-      }
-
-      this.calculFlavor();
-      
-      if (!isNaN(this.nicoStrength)) {
-        this.boostVolume = Math.round(this.totalVolume * this.nicoStrength / 20);
-        this.nbBooster = Math.ceil(this.boostVolume/10);
-      }
-    },
-
-    calcWithTotal : function() {
-      this.baseVolume = '';
-      this.baseVolume = this.totalVolume;
-
-      this.calculFlavor();
-      this.baseVolume = this.baseVolume - this.flavorVolume;
-
-      if (!isNaN(this.nicoStrength)) {
-        this.boostVolume = Math.round(this.totalVolume * this.nicoStrength / 20);
-        this.nbBooster = Math.ceil(this.boostVolume/10);
-        this.baseVolume = Math.ceil(this.baseVolume - this.boostVolume);
-      }
-    },
-
-    calc : function () {
-      this.nbBooster = '';
-      this.nbFlavor = '';
-      if(this.isTotal==true) {
-        this.calcWithTotal ();
-      } else {
-        this.calcWithBase ();
-      }
-      if(isFinite(this.flavorVolume/this.flavorCond)) {
-        this.nbFlavor = Math.ceil(this.flavorVolume/this.flavorCond);
-      }
-    },
-
-    calcTotal : function (isTotal) {
-      if(isTotal==true || isTotal==false) this.isTotal = isTotal;
-      this.calc();
-    },
-
-    calcFlavor : function (isPercent) {
-      if(isPercent==true || isPercent==false) this.isPercent = isPercent;
-      this.calc();
-    },
-
-    calcRate : function (rate) {
-      this.nicoStrength='';
-      if(rate!='') {
-        this.nicoStrength = rate;
-      }
-      this.calc();
     }
 
-  }
-}
+    const calculFlavor = () => {
+      if(isPercent.value==true) {
+          flavorVolume.value = Math.round(totalVolume.value * flavorPercent.value/100);
+      } else {
+           flavorPercent.value = Math.round (flavorVolume.value/totalVolume.value*100);
+      }
+    }
+
+    const calcWithBase = () => {
+      totalVolume.value = 0;
+      if(isPercent.value==true) {
+        totalVolume.value = Math.round(baseVolume.value / (1- (flavorPercent.value/100) - (nicoStrength.value/20)));
+      } else {
+        totalVolume.value = Math.round((baseVolume.value + flavorVolume.value) / (1- (nicoStrength.value/20)));
+      }
+
+      calculFlavor();
+      
+      if (!isNaN(nicoStrength.value)) {
+        boostVolume.value = Math.round(totalVolume.value * nicoStrength.value / 20);
+        nbBooster.value = Math.ceil(boostVolume.value/10);
+      }
+    }
+
+    const calcWithTotal = () => {
+      baseVolume.value = totalVolume.value;
+
+      calculFlavor();
+      baseVolume.value = baseVolume.value - flavorVolume.value;
+
+      if (!isNaN(nicoStrength.value)) {
+        boostVolume.value = Math.round(totalVolume.value * nicoStrength.value / 20);
+        nbBooster.value = Math.ceil(boostVolume.value/10);
+        baseVolume.value = Math.ceil(baseVolume.value - boostVolume.value);
+      }
+    }
+
+    const calc = () => {
+      nbBooster.value = 0;
+      nbFlavor.value = 0;
+      if(isTotal.value==true) {
+        calcWithTotal ();
+      } else {
+        calcWithBase ();
+      }
+      if(isFinite(flavorVolume.value/flavorCond.value)) {
+        nbFlavor.value = Math.ceil(flavorVolume.value/flavorCond.value);
+      }
+    }
+
+    const calcTotal = (isNewTotal:boolean) => {
+      if(isNewTotal==true || isNewTotal==false) isTotal.value = isNewTotal;
+      calc();
+    }
+
+    const calcFlavor = (isNewPercent:boolean) => {
+      if(isNewPercent==true || isNewPercent==false) isPercent.value = isNewPercent;
+      calc();
+    }
+
+    const calcRate = (rate:number) => {
+      nicoStrength.value=0;
+      if(rate!=null) {
+        nicoStrength.value = rate;
+      }
+      calc();
+    }
+
 </script>
 
 <style>
