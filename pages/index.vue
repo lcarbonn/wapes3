@@ -59,6 +59,9 @@
               <span class="result">{{flavorVolume}}</span> ml
             </p>
           </div>
+          <div class="row">
+            <button class="button" type="button" v-on:click="reset()">reset</button>
+          </div>
         </form>
       </div>
     </div>
@@ -70,15 +73,15 @@
 
 <script setup lang="ts">
   // local ref
-  const totalVolume = ref(0)
-  const baseVolume = ref(0)
-  const flavorPercent = ref(0)
-  const flavorVolume = ref(0)
+  const totalVolume = ref<number>()
+  const baseVolume = ref<number>()
+  const flavorPercent = ref<number>()
+  const flavorVolume = ref<number>()
   const nicoStrength = ref(0)
-  const nbBooster = ref(0)
-  const boostVolume = ref(0)
-  const flavorCond = ref(0)
-  const nbFlavor = ref(0)
+  const nbBooster = ref<number>()
+  const boostVolume = ref<number>()
+  const flavorCond = ref<number>()
+  const nbFlavor = ref<number>()
   const isTotal = ref(false)
   const isPercent = ref(true)
   const nicos = [
@@ -98,25 +101,39 @@
 
     const calculFlavor = () => {
       if(isPercent.value==true) {
+        if(totalVolume.value!=undefined && flavorPercent.value!=undefined) {
           flavorVolume.value = Math.round(totalVolume.value * flavorPercent.value/100);
+        }
       } else {
+        if(totalVolume.value!=undefined && flavorVolume.value!=undefined) {
            flavorPercent.value = Math.round (flavorVolume.value/totalVolume.value*100);
+        }
       }
     }
 
     const calcWithBase = () => {
-      totalVolume.value = 0;
-      if(isPercent.value==true) {
-        totalVolume.value = Math.round(baseVolume.value / (1- (flavorPercent.value/100) - (nicoStrength.value/20)));
-      } else {
-        totalVolume.value = Math.round((baseVolume.value + flavorVolume.value) / (1- (nicoStrength.value/20)));
-      }
+      if(baseVolume.value != undefined) {
+        totalVolume.value = baseVolume.value
+        if(flavorPercent.value!=undefined) {
+          if(flavorPercent.value!= undefined) {
+            totalVolume.value = Math.round(baseVolume.value / (1- (flavorPercent.value/100) - (nicoStrength.value/20)));
+          }
+        } 
+        if(flavorVolume.value!=undefined) {
+          if(flavorVolume.value!= undefined) {
+            totalVolume.value = Math.round((baseVolume.value + flavorVolume.value) / (1- (nicoStrength.value/20)));
+          }
+        }
+        if(flavorPercent.value==undefined && flavorVolume.value==undefined) {
+          totalVolume.value = Math.round((baseVolume.value) / (1- (nicoStrength.value/20)));
+        }
 
-      calculFlavor();
-      
-      if (!isNaN(nicoStrength.value)) {
-        boostVolume.value = Math.round(totalVolume.value * nicoStrength.value / 20);
-        nbBooster.value = Math.ceil(boostVolume.value/10);
+        calculFlavor();
+        
+        if (nicoStrength.value!=undefined) {
+          boostVolume.value = Math.round(totalVolume.value * nicoStrength.value / 20);
+          nbBooster.value = Math.ceil(boostVolume.value/10);
+        }
       }
     }
 
@@ -124,9 +141,11 @@
       baseVolume.value = totalVolume.value;
 
       calculFlavor();
-      baseVolume.value = baseVolume.value - flavorVolume.value;
+      if(baseVolume.value!=undefined && flavorVolume.value!= undefined) {
+        baseVolume.value = baseVolume.value - flavorVolume.value;
+      }
 
-      if (!isNaN(nicoStrength.value)) {
+      if (nicoStrength.value!=undefined && totalVolume.value!=undefined && baseVolume.value!=undefined) {
         boostVolume.value = Math.round(totalVolume.value * nicoStrength.value / 20);
         nbBooster.value = Math.ceil(boostVolume.value/10);
         baseVolume.value = Math.ceil(baseVolume.value - boostVolume.value);
@@ -141,18 +160,18 @@
       } else {
         calcWithBase ();
       }
-      if(isFinite(flavorVolume.value/flavorCond.value)) {
+      if(flavorVolume.value!=undefined && flavorCond.value!=undefined && isFinite(flavorVolume.value/flavorCond.value)) {
         nbFlavor.value = Math.ceil(flavorVolume.value/flavorCond.value);
       }
     }
 
     const calcTotal = (isNewTotal:boolean) => {
-      if(isNewTotal==true || isNewTotal==false) isTotal.value = isNewTotal;
+      isTotal.value = isNewTotal;
       calc();
     }
 
     const calcFlavor = (isNewPercent:boolean) => {
-      if(isNewPercent==true || isNewPercent==false) isPercent.value = isNewPercent;
+      isPercent.value = isNewPercent;
       calc();
     }
 
@@ -162,6 +181,20 @@
         nicoStrength.value = rate;
       }
       calc();
+    }
+
+    const reset = () => {
+      totalVolume.value = undefined
+      baseVolume.value = undefined
+      flavorPercent.value = undefined
+      flavorVolume.value = undefined
+      nicoStrength.value = 0
+      nbBooster.value = undefined
+      boostVolume.value = undefined
+      flavorCond.value = undefined
+      nbFlavor.value = undefined
+      isTotal.value = false
+      isPercent.value = true
     }
 
 </script>
@@ -293,4 +326,20 @@ h4 {
   color:white;
   letter-spacing: 1px;
 }
+.button {
+  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
+    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-size: 1rem;
+  color: #3986c4;
+  background-color: white;
+  border: solid 1px white;
+  text-align: center;
+  display: inline-block;
+  border-radius: 8px;
+}
+.button:hover {
+  color: white;
+  background-color: #3986c4;
+}
+
 </style>
