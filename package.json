@@ -10,8 +10,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
-    "generate-pwa-assets": "pwa-assets-generator --preset minimal-2023 public/icon.png"
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
     "@vite-pwa/nuxt": "^0.10.6",
@@ -19,8 +18,5 @@
     "nuxt": "^3.14.0",
     "vue": "latest",
     "vue-router": "latest"
-  },
-  "devDependencies": {
-    "@vite-pwa/assets-generator": "^0.2.6"
   }
 }
