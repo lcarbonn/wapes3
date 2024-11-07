@@ -11,7 +11,8 @@ export default defineNuxtConfig({
         { hid: 'description', name: 'description', content: 'Wapes Calculator' },
       ],
       link: [
-        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+        { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+        { rel: 'apple-touch-icon', type: 'image/x-icon', href: '/apple-touch-icon-180x180.png' }
       ]
     },
   },
