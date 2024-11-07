@@ -1,5 +1,6 @@
 <template>
-  <section class="container">
+  <ClientOnly>
+  <div class="container">
     <div>
       <Logo />
       <h1>Wapes</h1>
@@ -60,7 +61,7 @@
             </p>
           </div>
           <div class="row">
-            <button class="button" type="button" v-on:click="reset()">reset</button>
+            <button class="button" type="button" v-on:click="reset()">Reset</button>
           </div>
         </form>
       </div>
@@ -68,7 +69,8 @@
     <div>
       <AppFooter/>
     </div>
-  </section>
+  </div>
+</ClientOnly>
 </template>
 
 <script setup lang="ts">
@@ -336,6 +338,7 @@ h4 {
   text-align: center;
   display: inline-block;
   border-radius: 8px;
+  justify-content: center;  cursor: pointer;
 }
 .button:hover {
   color: white;
